@@ -61,6 +61,7 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
   int min = min_score;
   int num_iter = k;
   int min_set = 3;
+  int plane_no = 1;
   double tolerance = epsilon;
   std::vector<Point> random_set;
   while(random_set.size() < 3){
@@ -72,7 +73,23 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
           std::cout<< _input_points[my_random_number].x<< std::endl;
       }
   }
-  //for(i begin())
+
+  double a = ((random_set[1].y - random_set[0].y) * (random_set[2].z - random_set[0].z))-((random_set[1].z - random_set[0].z) * (random_set[2].y - random_set[1].y));
+  double b = ((random_set[1].z - random_set[0].z) * (random_set[2].x - random_set[0].x))-((random_set[1].x - random_set[0].x) * (random_set[2].z - random_set[1].z));
+  double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y))-((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
+  double d = -((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
+  std::cout<< a<<std::endl;
+  std::cout<< b<<std::endl;
+  std::cout<< c<<std::endl;
+  std::cout<< d<<std::endl;
+    for(auto i = begin(_input_points); i != end(_input_points); ++i) {
+        double dist = (a * i->x + b * i->y + c * i->z + d)/ std::sqrt(a*a + b*b + c*c);
+        std::cout<< dist << std::endl;
+        if(dist <= tolerance){
+            i->segment_id = plane_no;
+        }
+    }
+    //for(i begin())
 /*
   for(auto i = begin(_input_points); i != end(_input_points); ++i) {
       std::cout<< i->x<<" "<<i->y << std::endl;
