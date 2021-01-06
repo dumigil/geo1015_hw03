@@ -26,6 +26,8 @@ class PlaneDetector {
 
   //-- you can add your own variables and functions here
 
+  //-- where the random 3 points will go
+  //std::vector<Point> _random_set;
 
   /*
   !!! DO NOT MODIFY below this line !!!

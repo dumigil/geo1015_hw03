@@ -2,8 +2,8 @@
   GEO1015.2020
   hw03
   --
-  [YOUR NAME]
-  [YOUR STUDENT NUMBER]
+  Michiel de Jong
+  4376978
   [YOUR NAME]
   [YOUR STUDENT NUMBER]
 */

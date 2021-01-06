@@ -1,0 +1,4 @@
+data/bk_sub25m.ply filter=lfs diff=lfs merge=lfs -text
+data/out.ply filter=lfs diff=lfs merge=lfs -text
+data/bk.ply filter=lfs diff=lfs merge=lfs -text
+data/bk_example_output.ply filter=lfs diff=lfs merge=lfs -text

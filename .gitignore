@@ -118,4 +118,6 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 #USER
-.DS_Store
+*.DS_Store
+*.ini
+.idea/

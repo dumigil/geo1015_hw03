@@ -1,7 +1,7 @@
 {
-  "input_file": "bk.ply",
+  "input_file": "bk_sub25m.ply",
   "output_file": "out.ply",
-  "n_planes": 50,
+  "n_planes": 1,
   "k": 50,
   "min_score": 50,
   "epsilon": 0.3
