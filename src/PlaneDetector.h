@@ -28,7 +28,7 @@ class PlaneDetector {
 
   //-- where the random 3 points will go
   //std::vector<Point> _random_set;
-
+  int plane_no = 1;
   /*
   !!! DO NOT MODIFY below this line !!!
   */
@@ -66,5 +66,7 @@ class PlaneDetector {
 
   //-- random number generator to generate your random numbers (important for RANSAC!)
   std::mt19937 _rand{ std::mt19937{std::random_device{}()} };
+
+
 
 };

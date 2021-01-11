@@ -18,6 +18,7 @@
 
 #include "PlaneDetector.h"
 
+
 /*
 !!! TO BE COMPLETED !!!
 
@@ -61,43 +62,91 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
   int min = min_score;
   int num_iter = k;
   int min_set = 3;
-  int plane_no = 1;
+  int score;
   double tolerance = epsilon;
-  std::vector<Point> random_set;
-  while(random_set.size() < 3){
-      std::uniform_int_distribution<int> distrib(0,_input_points.size());
-      int my_random_number = distrib(_rand);
-      std::cout<< _input_points[my_random_number].x<< std::endl;
-      if(_input_points[my_random_number].segment_id == 0){
-          random_set.push_back(_input_points[my_random_number]);
-          std::cout<< _input_points[my_random_number].x<< std::endl;
+  std::vector<std::vector<Point *>> total_sets;
+
+
+  while(num_iter !=0) {
+
+
+      std::vector<Point *> in_set;
+
+      std::vector<Point> random_set;
+      while (random_set.size() < 3) {
+          std::uniform_int_distribution<int> distrib(0, _input_points.size());
+          int my_random_number = distrib(_rand);
+          //std::cout << _input_points[my_random_number].x << std::endl;
+          if (_input_points[my_random_number].segment_id == 0) {
+
+              random_set.push_back(_input_points[my_random_number]);
+              //std::cout << _input_points[my_random_number].x << std::endl;
+          }
+      }
+
+      double a = ((random_set[1].y - random_set[0].y) * (random_set[2].z - random_set[0].z)) -
+                 ((random_set[1].z - random_set[0].z) * (random_set[2].y - random_set[1].y));
+      double b = ((random_set[1].z - random_set[0].z) * (random_set[2].x - random_set[0].x)) -
+                 ((random_set[1].x - random_set[0].x) * (random_set[2].z - random_set[1].z));
+      double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y)) -
+                 ((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
+      double d = -1 * ((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
+      //std::cout << a << std::endl;
+      //std::cout << b << std::endl;
+      //std::cout << c << std::endl;
+      //std::cout << d << std::endl;
+      for (std::size_t i = 0; i != _input_points.size(); ++i) {
+          //int index = *i;
+          double dist = std::abs(((a * _input_points[i].x) + (b * _input_points[i].y) + (c * _input_points[i].z) + d) /
+                                 (std::sqrt(a * a + b * b + c * c)));
+          //std::cout << dist << std::endl;
+          if (dist < tolerance) {
+              in_set.push_back(&_input_points[i]);
+              //_input_points[i].segment_id = plane_no;
+              score++;
+
+          }
+      }
+      total_sets.push_back(in_set);
+      num_iter --;
+  }
+  /*
+  auto it = std::max_element(total_sets.begin(), total_sets.end(),[](const auto& a,const auto& b) {
+      return a.size() < b.size();
+  });
+  std::cout<< *it. << std::endl;
+  */
+  size_t max_length = 0;
+  std::vector<size_t> max_index;
+  for(size_t i = 0; i <total_sets.size(); i++){
+      size_t this_len = total_sets[i].size();
+      if(this_len > max_length){
+          max_length = this_len;
+          max_index.clear();
+          max_index.push_back(i);
+      } else if (this_len == max_length){
+          max_index.push_back(i);
       }
   }
-
-  double a = ((random_set[1].y - random_set[0].y) * (random_set[2].z - random_set[0].z))-((random_set[1].z - random_set[0].z) * (random_set[2].y - random_set[1].y));
-  double b = ((random_set[1].z - random_set[0].z) * (random_set[2].x - random_set[0].x))-((random_set[1].x - random_set[0].x) * (random_set[2].z - random_set[1].z));
-  double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y))-((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
-  double d = -((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
-  std::cout<< a<<std::endl;
-  std::cout<< b<<std::endl;
-  std::cout<< c<<std::endl;
-  std::cout<< d<<std::endl;
-    for(auto i = begin(_input_points); i != end(_input_points); ++i) {
-        double dist = (a * i->x + b * i->y + c * i->z + d)/ std::sqrt(a*a + b*b + c*c);
-        std::cout<< dist << std::endl;
-        if(dist <= tolerance){
-            i->segment_id = plane_no;
-        }
-    }
-    //for(i begin())
-/*
-  for(auto i = begin(_input_points); i != end(_input_points); ++i) {
-      std::cout<< i->x<<" "<<i->y << std::endl;
-  }
-*/
-
+  //std::cout<< total_sets[max_index[0]].data()->segment_id << std::endl;
+  std::vector<Point *> winner = total_sets[max_index[0]];
+  for(std::size_t j =0;j != winner.size(); j++){
+      Point* pt = winner[j];
+      if(pt->segment_id == 0){
+          pt->segment_id = plane_no;
+      }
+      //auto it = std::find(winner.begin(), winner.end(),p);
+      std::cout<< pt->segment_id << std::endl;
+      }
+  plane_no ++;
 
 }
+
+/*
+ std::vector<Point>::iterator it = std::find_if(winner.begin(),winner.end(),[&](const Point& p){
+          return
+      })
+ */
 
 // PLY I/O
 
