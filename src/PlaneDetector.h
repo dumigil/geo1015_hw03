@@ -2,10 +2,8 @@
   GEO1015.2020
   hw03 
   --
-  [YOUR NAME] 
-  [YOUR STUDENT NUMBER] 
-  [YOUR NAME] 
-  [YOUR STUDENT NUMBER] 
+  Michiel de Jong
+  4376978
 */
 
 
@@ -29,6 +27,15 @@ class PlaneDetector {
   //-- where the random 3 points will go
   //std::vector<Point> _random_set;
   int plane_no = 1;
+
+public: double euclidianSquared(double x1, double y1, double z1, double x2, double y2, double z2){
+      double x = x1 - x2;
+      double y = y1 - y2;
+      double z = z1 - z2;
+      double dist;
+      dist = std::pow(x,2) + std::pow(y,2) + std::pow(z, 2);
+      return dist;
+  }
   /*
   !!! DO NOT MODIFY below this line !!!
   */
