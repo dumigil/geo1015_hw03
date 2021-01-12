@@ -59,7 +59,7 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
   //-- see https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution for more info
   int min = min_score;
   int num_iter = k;
-  int score;
+  bool score = false;
   double tolerance = epsilon;
   int localArea = 1;
   std::vector<std::vector<Point *>> total_sets;
@@ -105,23 +105,18 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
 
 
   std::vector<Point *> largestSet;
-
   std::sort(total_sets.begin(), total_sets.end(), [](const std::vector<Point *> & a, const std::vector<Point *> & b){ return a.size() < b.size(); });
-  largestSet = total_sets.back();
-  std::cout<< largestSet.size()<<std::endl;
-
-
-
-  //std::vector<Point *> winner = total_sets[max_index[0]];
-  if(largestSet.size() > min_score) {
-      for (std::size_t j = 0; j != largestSet.size(); j++) {
+  if(total_sets.back().size() > min_score) {
+      largestSet = total_sets.back();
+      for (int j = 0; j < largestSet.size(); j++) {
           Point *pt = largestSet[j];
           if (pt->segment_id == 0) {
               pt->segment_id = plane_no;
+              std::cout<< largestSet.size()<<std::endl;
           }
       }
-  } else{
-      std::cout << "Sorry, this segment does not contain enough points"<<std::endl;
+  }else{
+
   }
   plane_no ++;
 
