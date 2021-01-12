@@ -103,22 +103,19 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
       num_iter --;
   }
 
-  size_t max_length = 0;
-  std::vector<size_t> max_index;
-  for(size_t i = 0; i <total_sets.size(); i++){
-      size_t this_len = total_sets[i].size();
-      if(this_len > max_length){
-          max_length = this_len;
-          max_index.clear();
-          max_index.push_back(i);
-      } else if (this_len == max_length){
-          max_index.push_back(i);
-      }
-  }
-  std::vector<Point *> winner = total_sets[max_index[0]];
-  if(winner.size() > min) {
-      for (std::size_t j = 0; j != winner.size(); j++) {
-          Point *pt = winner[j];
+
+  std::vector<Point *> largestSet;
+
+  std::sort(total_sets.begin(), total_sets.end(), [](const std::vector<Point *> & a, const std::vector<Point *> & b){ return a.size() < b.size(); });
+  largestSet = total_sets.back();
+  std::cout<< largestSet.size()<<std::endl;
+
+
+
+  //std::vector<Point *> winner = total_sets[max_index[0]];
+  if(largestSet.size() > min_score) {
+      for (std::size_t j = 0; j != largestSet.size(); j++) {
+          Point *pt = largestSet[j];
           if (pt->segment_id == 0) {
               pt->segment_id = plane_no;
           }
