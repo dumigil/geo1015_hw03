@@ -4,8 +4,6 @@
   --
   Michiel de Jong
   4376978
-  [YOUR NAME] 
-  [YOUR STUDENT NUMBER] 
 */
 
 
@@ -61,26 +59,28 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
   //-- see https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution for more info
   int min = min_score;
   int num_iter = k;
-  int min_set = 3;
   int score;
   double tolerance = epsilon;
+  int localArea = 1;
   std::vector<std::vector<Point *>> total_sets;
 
-
   while(num_iter !=0) {
-
-
       std::vector<Point *> in_set;
-
       std::vector<Point> random_set;
       while (random_set.size() < 3) {
           std::uniform_int_distribution<int> distrib(0, _input_points.size());
           int my_random_number = distrib(_rand);
-          //std::cout << _input_points[my_random_number].x << std::endl;
-          if (_input_points[my_random_number].segment_id == 0) {
+          if(random_set.size() == 0){
+              if (_input_points[my_random_number].segment_id == 0) {
 
-              random_set.push_back(_input_points[my_random_number]);
-              //std::cout << _input_points[my_random_number].x << std::endl;
+                  random_set.push_back(_input_points[my_random_number]);
+              }
+          } else {
+              if(pow(_input_points[my_random_number].x - random_set[0].x, 2) + pow(_input_points[my_random_number].y - random_set[0].y, 2) <= (localArea * localArea)){
+                  if (_input_points[my_random_number].segment_id == 0) {
+                      random_set.push_back(_input_points[my_random_number]);
+                  }
+              }
           }
       }
 
@@ -91,31 +91,18 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
       double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y)) -
                  ((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
       double d = -1 * ((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
-      //std::cout << a << std::endl;
-      //std::cout << b << std::endl;
-      //std::cout << c << std::endl;
-      //std::cout << d << std::endl;
       for (std::size_t i = 0; i != _input_points.size(); ++i) {
-          //int index = *i;
           double dist = std::abs(((a * _input_points[i].x) + (b * _input_points[i].y) + (c * _input_points[i].z) + d) /
                                  (std::sqrt(a * a + b * b + c * c)));
-          //std::cout << dist << std::endl;
           if (dist < tolerance) {
               in_set.push_back(&_input_points[i]);
-              //_input_points[i].segment_id = plane_no;
-              score++;
 
           }
       }
       total_sets.push_back(in_set);
       num_iter --;
   }
-  /*
-  auto it = std::max_element(total_sets.begin(), total_sets.end(),[](const auto& a,const auto& b) {
-      return a.size() < b.size();
-  });
-  std::cout<< *it. << std::endl;
-  */
+
   size_t max_length = 0;
   std::vector<size_t> max_index;
   for(size_t i = 0; i <total_sets.size(); i++){
@@ -128,25 +115,20 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
           max_index.push_back(i);
       }
   }
-  //std::cout<< total_sets[max_index[0]].data()->segment_id << std::endl;
   std::vector<Point *> winner = total_sets[max_index[0]];
-  for(std::size_t j =0;j != winner.size(); j++){
-      Point* pt = winner[j];
-      if(pt->segment_id == 0){
-          pt->segment_id = plane_no;
+  if(winner.size() > min) {
+      for (std::size_t j = 0; j != winner.size(); j++) {
+          Point *pt = winner[j];
+          if (pt->segment_id == 0) {
+              pt->segment_id = plane_no;
+          }
       }
-      //auto it = std::find(winner.begin(), winner.end(),p);
-      std::cout<< pt->segment_id << std::endl;
-      }
+  } else{
+      std::cout << "Sorry, this segment does not contain enough points"<<std::endl;
+  }
   plane_no ++;
 
 }
-
-/*
- std::vector<Point>::iterator it = std::find_if(winner.begin(),winner.end(),[&](const Point& p){
-          return
-      })
- */
 
 // PLY I/O
 

@@ -4,8 +4,7 @@
   --
   Michiel de Jong
   4376978
-  [YOUR NAME]
-  [YOUR STUDENT NUMBER]
+
 */
 
 
