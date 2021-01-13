@@ -66,39 +66,45 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
 
   while(num_iter !=0) {
       std::vector<Point *> in_set;
-      std::vector<Point> random_set;
-      std::vector<Point> localPoints;
+      std::vector<Point *> random_set;
+      std::vector<Point *> localPoints;
       std::uniform_int_distribution<int> distrib1(0, _input_points.size());
       int my_random_number1 = distrib1(_rand);
       Point p1 = _input_points[my_random_number1];
-      random_set.push_back(p1);
+
+      random_set.push_back(&p1);
       for (std::size_t i = 0; i != _input_points.size(); ++i) {
-          Point currentPoint = _input_points[i];
-          if (euclidianSquared(p1.x,p1.y,p1.z,currentPoint.x,currentPoint.y,currentPoint.z) < localArea){
+          Point *currentPoint = &_input_points[i];
+          if (euclidianSquared(p1.x,p1.y,p1.z,currentPoint->x,currentPoint->y,currentPoint->z) < localArea){
               //_input_points[i].segment_id = 1;
-              if(currentPoint.segment_id == 0) {
+              if(currentPoint->segment_id == 0) {
                   localPoints.push_back(currentPoint);
+              }else{
+                  continue;
               }
+          }else{
+              continue;
           }
       }
     //std::cout<<localPoints.size()<<std::endl;
     while(random_set.size() < 3){
           std::uniform_int_distribution<int> distrib2(0, localPoints.size());
           int my_random_number2 = distrib2(_rand);
-          Point localPoint = localPoints[my_random_number2];
-          if(localPoint.segment_id == 0) {
+          Point *localPoint = localPoints[my_random_number2];
+          if(localPoint->segment_id == 0) {
               random_set.push_back(localPoint);
           }
     }
 
 
-      double a = ((random_set[1].y - random_set[0].y) * (random_set[2].z - random_set[0].z)) -
-                 ((random_set[1].z - random_set[0].z) * (random_set[2].y - random_set[1].y));
-      double b = ((random_set[1].z - random_set[0].z) * (random_set[2].x - random_set[0].x)) -
-                 ((random_set[1].x - random_set[0].x) * (random_set[2].z - random_set[1].z));
-      double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y)) -
-                 ((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
-      double d = -1 * ((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
+      double a = ((random_set[1]->y - random_set[0]->y) * (random_set[2]->z - random_set[0]->z)) -
+                 ((random_set[1]->z - random_set[0]->z) * (random_set[2]->y - random_set[1]->y));
+      double b = ((random_set[1]->z - random_set[0]->z) * (random_set[2]->x - random_set[0]->x)) -
+                 ((random_set[1]->x - random_set[0]->x) * (random_set[2]->z - random_set[1]->z));
+      double c = ((random_set[1]->x - random_set[0]->x) * (random_set[2]->y - random_set[0]->y)) -
+                 ((random_set[1]->y - random_set[0]->y) * (random_set[2]->x - random_set[1]->x));
+      double d = -1 * ((a * random_set[0]->x) + (b * random_set[0]->y) + (c * random_set[0]->z));
+
       for (std::size_t i = 0; i != _input_points.size(); ++i) {
           double dist = std::abs(((a * _input_points[i].x) + (b * _input_points[i].y) + (c * _input_points[i].z) + d) /
                                  (std::sqrt(a * a + b * b + c * c)));
@@ -109,8 +115,12 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
       }
       total_sets.push_back(in_set);
       num_iter --;
-
-
+      /*
+      for (std::vector<Point*>::iterator pObj = in_set.begin();
+           pObj != in_set.end(); ++pObj) {
+          delete *pObj;
+      }
+      */
 
   }
 
@@ -122,14 +132,16 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
       for (auto pt : largestSet) {
           if (pt->segment_id == 0) {
               pt->segment_id = plane_no;
-              std::cout<< largestSet.size()<<std::endl;
+              //std::cout<< largestSet.size()<<std::endl;
           }
       }
+      plane_no ++;
   }else{
+
   }
-  total_sets.clear();
-  
-  plane_no ++;
+
+
+
 
 
 }

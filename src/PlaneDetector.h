@@ -28,12 +28,12 @@ class PlaneDetector {
   //std::vector<Point> _random_set;
   int plane_no = 1;
 
-public: double euclidianSquared(double x1, double y1, double z1, double x2, double y2, double z2){
+public: static double euclidianSquared(double x1, double y1, double z1, double x2, double y2, double z2){
       double x = x1 - x2;
       double y = y1 - y2;
       double z = z1 - z2;
       double dist;
-      dist = std::pow(x,2) + std::pow(y,2) + std::pow(z, 2);
+      dist = std::abs(std::pow(x,2) + std::pow(y,2) + std::pow(z, 2));
       return dist;
   }
   /*
