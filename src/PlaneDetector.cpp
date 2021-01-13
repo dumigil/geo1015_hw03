@@ -61,66 +61,112 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
     int num_iter = k;
     bool score = false;
     double tolerance = epsilon;
-    int localArea = 1;
+    int localArea = 20;
+    int planeRadius = localArea/5;
     std::vector<std::vector<Point *>> total_sets;
+    std::uniform_int_distribution<int> distrib1 (0,_input_points.size()-1);
+    int randomNumber1 = distrib1(_rand);
 
-    while(num_iter !=0) {
+    while(num_iter > 0) {
         std::vector<Point *> in_set;
-        std::vector<Point> random_set;
-        while (random_set.size() < 3) {
-            std::uniform_int_distribution<int> distrib(0, _input_points.size());
-            int my_random_number = distrib(_rand);
-            if(random_set.size() == 0){
-                if (_input_points[my_random_number].segment_id == 0) {
+        std::vector<Point *> random_set;
 
-                    random_set.push_back(_input_points[my_random_number]);
-                }
-            } else {
-                if(pow(_input_points[my_random_number].x - random_set[0].x, 2) + pow(_input_points[my_random_number].y - random_set[0].y, 2) <= (localArea * localArea)){
-                    if (_input_points[my_random_number].segment_id == 0) {
-                        random_set.push_back(_input_points[my_random_number]);
-                    }
-                }
+        std::vector<Point *> localSet;
+
+        Point *randomPoint = &_input_points[randomNumber1];
+
+        for (int i = 0; i != _input_points.size(); i++) {
+            if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
+                                 randomPoint->y, randomPoint->z) < std::pow(localArea, 2)) {
+                localSet.push_back(&_input_points[i]);
+                //_input_points[i].segment_id = 2;
             }
         }
 
-        double a = ((random_set[1].y - random_set[0].y) * (random_set[2].z - random_set[0].z)) -
-                   ((random_set[1].z - random_set[0].z) * (random_set[2].y - random_set[1].y));
-        double b = ((random_set[1].z - random_set[0].z) * (random_set[2].x - random_set[0].x)) -
-                   ((random_set[1].x - random_set[0].x) * (random_set[2].z - random_set[1].z));
-        double c = ((random_set[1].x - random_set[0].x) * (random_set[2].y - random_set[0].y)) -
-                   ((random_set[1].y - random_set[0].y) * (random_set[2].x - random_set[1].x));
-        double d = -1 * ((a * random_set[0].x) + (b * random_set[0].y) + (c * random_set[0].z));
-        for (std::size_t i = 0; i != _input_points.size(); ++i) {
-            double dist = std::abs(((a * _input_points[i].x) + (b * _input_points[i].y) + (c * _input_points[i].z) + d) /
+
+        while (random_set.size() < 3) {
+            std::uniform_int_distribution<int> distrib2(0, localSet.size() - 1);
+            int randomNumber2 = distrib2(_rand);
+            Point *randomPoint2 = localSet[randomNumber2];
+            if( euclidianSquared(randomPoint2->x,randomPoint2->y,randomPoint2->z,randomPoint->x,
+                                 randomPoint->y, randomPoint->z) < std::pow(planeRadius, 2)) {
+                random_set.push_back(randomPoint2);
+                randomNumber2 = 0;
+            }
+            else{
+                continue;
+            }
+            //randomPoint2->segment_id = plane_no;
+        }
+
+        double a = ((random_set[1]->y - random_set[0]->y) * (random_set[2]->z - random_set[0]->z)) -
+                   ((random_set[1]->z - random_set[0]->z) * (random_set[2]->y - random_set[1]->y));
+        double b = ((random_set[1]->z - random_set[0]->z) * (random_set[2]->x - random_set[0]->x)) -
+                   ((random_set[1]->x - random_set[0]->x) * (random_set[2]->z - random_set[1]->z));
+        double c = ((random_set[1]->x - random_set[0]->x) * (random_set[2]->y - random_set[0]->y)) -
+                   ((random_set[1]->y - random_set[0]->y) * (random_set[2]->x - random_set[1]->x));
+        double d = -1 * ((a * random_set[0]->x) + (b * random_set[0]->y) + (c * random_set[0]->z));
+        int counter = 0;
+
+        for (int i = 0; i < localSet.size(); ++i) {
+            double dist = std::abs(((a * localSet[i]->x) + (b * localSet[i]->y) + (c * localSet[i]->z) + d) /
                                    (std::sqrt(a * a + b * b + c * c)));
             if (dist < tolerance) {
-                in_set.push_back(&_input_points[i]);
-
+                in_set.push_back(localSet[i]);
+                counter++;
             }
         }
-        total_sets.push_back(in_set);
+        if (counter > min) {
+            total_sets.push_back(in_set);
+        }
+        else{
+            num_iter --;
+        }
         num_iter --;
+        //std::cout<< counter <<std::endl;
     }
-
-
     std::vector<Point *> largestSet;
     std::sort(total_sets.begin(), total_sets.end(), [](const std::vector<Point *> & a, const std::vector<Point *> & b){ return a.size() < b.size(); });
-    if(total_sets.back().size() > min_score) {
-        largestSet = total_sets.back();
-        for (int j = 0; j < largestSet.size(); j++) {
-            Point *pt = largestSet[j];
-            if (pt->segment_id == 0) {
-                pt->segment_id = plane_no;
-                std::cout<< largestSet.size()<<std::endl;
+    if(total_sets.size() != 0) {
+        if (total_sets.back().size() > min_score) {
+            largestSet = total_sets.back();
+            for (int j = 0; j < largestSet.size(); j++) {
+                Point *pt = largestSet[j];
+                if (pt->segment_id == 0) {
+                    pt->segment_id = plane_no;
+                    //std::cout<< largestSet.size()<<std::endl;
+                } else {
+                    break;
+                }
             }
         }
-    }else{
-
     }
+    else{
+        plane_no++;
+    }
+    /*
+    for(std::vector<std::vector<Point *>>::iterator p0bj=total_sets.begin(); p0bj!=total_sets.end();p0bj++){
+        for(std::vector<Point *>::iterator p0bj2=p0bj->begin();p0bj2!=p0bj->end();p0bj2++){
+            delete *p0bj2;
+        }
+    }
+    */
+    std::cout<< "Segment #"<<plane_no<<" identified"<<std::endl;
     plane_no ++;
 
 }
+
+    /*
+
+
+
+    }else{
+
+    }
+    std::cout<< "Segment #"<<plane_no<<" identified"<<std::endl;
+    plane_no ++;
+    */
+
 
 // PLY I/O
 

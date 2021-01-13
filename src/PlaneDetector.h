@@ -76,4 +76,5 @@ public: static double euclidianSquared(double x1, double y1, double z1, double x
 
 
 
+
 };
