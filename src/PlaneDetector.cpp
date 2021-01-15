@@ -59,19 +59,19 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
     //-- see https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution for more info
     int min = min_score;
     int num_iter = k;
-    bool score = false;
     double tolerance = epsilon;
-    int localArea = 20;
-    int planeRadius = localArea/5;
+    int localArea = 30;
     std::vector<std::vector<Point *>> total_sets;
-    std::uniform_int_distribution<int> distrib1 (0,_input_points.size()-1);
-    int randomNumber1 = distrib1(_rand);
+    std::uniform_int_distribution<int> distrib1(0, _input_points.size() - 1);
 
-    while(num_iter > 0) {
+    while (num_iter > 0) {
         std::vector<Point *> in_set;
         std::vector<Point *> random_set;
 
         std::vector<Point *> localSet;
+        std::vector<Point *> planeSet;
+        int randomNumber1 = distrib1(_rand);
+
 
         Point *randomPoint = &_input_points[randomNumber1];
 
@@ -79,24 +79,24 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
             if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
                                  randomPoint->y, randomPoint->z) < std::pow(localArea, 2)) {
                 localSet.push_back(&_input_points[i]);
-                //_input_points[i].segment_id = 2;
+            }
+            if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
+                                 randomPoint->y, randomPoint->z) < (localArea*localArea)/20) {
+                planeSet.push_back(&_input_points[i]);
+            }
+        }
+        std::uniform_int_distribution<int> distrib2(0, planeSet.size() -1);
+
+        if (planeSet.size() > 3) {
+            while (random_set.size() < 3) {
+                int randomNumber2 = distrib2(_rand);
+                Point *randomPoint2 = planeSet[randomNumber2];
+                random_set.push_back(randomPoint2);
             }
         }
 
-
-        while (random_set.size() < 3) {
-            std::uniform_int_distribution<int> distrib2(0, localSet.size() - 1);
-            int randomNumber2 = distrib2(_rand);
-            Point *randomPoint2 = localSet[randomNumber2];
-            if( euclidianSquared(randomPoint2->x,randomPoint2->y,randomPoint2->z,randomPoint->x,
-                                 randomPoint->y, randomPoint->z) < std::pow(planeRadius, 2)) {
-                random_set.push_back(randomPoint2);
-                randomNumber2 = 0;
-            }
-            else{
-                continue;
-            }
-            //randomPoint2->segment_id = plane_no;
+        else{
+            break;
         }
 
         double a = ((random_set[1]->y - random_set[0]->y) * (random_set[2]->z - random_set[0]->z)) -
@@ -118,43 +118,52 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
         }
         if (counter > min) {
             total_sets.push_back(in_set);
+            num_iter--;
+        } else {
+            num_iter--;
         }
-        else{
-            num_iter --;
-        }
-        num_iter --;
-        //std::cout<< counter <<std::endl;
+        //std::cout<<num_iter<<std::endl;
     }
     std::vector<Point *> largestSet;
-    std::sort(total_sets.begin(), total_sets.end(), [](const std::vector<Point *> & a, const std::vector<Point *> & b){ return a.size() < b.size(); });
-    if(total_sets.size() != 0) {
+    std::sort(total_sets.begin(), total_sets.end(),
+              [](const std::vector<Point *> &a, const std::vector<Point *> &b) { return a.size() < b.size(); });
+    if (total_sets.size() != 0) {
         if (total_sets.back().size() > min_score) {
             largestSet = total_sets.back();
+            int threshold = 0;
             for (int j = 0; j < largestSet.size(); j++) {
                 Point *pt = largestSet[j];
                 if (pt->segment_id == 0) {
-                    pt->segment_id = plane_no;
-                    //std::cout<< largestSet.size()<<std::endl;
+                    threshold ++;
                 } else {
-                    break;
+                    continue;
                 }
             }
-        }
-    }
-    else{
-        plane_no++;
-    }
-    /*
-    for(std::vector<std::vector<Point *>>::iterator p0bj=total_sets.begin(); p0bj!=total_sets.end();p0bj++){
-        for(std::vector<Point *>::iterator p0bj2=p0bj->begin();p0bj2!=p0bj->end();p0bj2++){
-            delete *p0bj2;
-        }
-    }
-    */
-    std::cout<< "Segment #"<<plane_no<<" identified"<<std::endl;
-    plane_no ++;
+            if(threshold > (0.5 * min)){
+                for(int k = 0; k < largestSet.size(); k++){
+                    Point *pt2 = largestSet[k];
+                    if (pt2->segment_id == 0) {
+                        pt2->segment_id = plane_no;
 
+                    } else {
+                        continue;
+                    }
+                }
+                std::cout << "Segment #" << plane_no << " identified" << std::endl;
+                plane_no++;
+
+            }
+            else{
+
+            }
+        }
+
+    } else {
+
+    }
 }
+
+
 
     /*
 

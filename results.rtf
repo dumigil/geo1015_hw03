@@ -1,0 +1,195 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 Courier;\f1\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red191\green100\blue38;\red32\green32\blue32;\red153\green168\blue186;
+\red133\green96\blue154;\red88\green118\blue71;\red86\green132\blue173;\red128\green93\blue148;\red78\green122\blue119;
+\red82\green0\blue103;\red15\green112\blue3;\red0\green0\blue254;\red0\green0\blue109;\red14\green110\blue109;
+}
+{\*\expandedcolortbl;;\csgenericrgb\c74902\c39216\c14902;\csgenericrgb\c12549\c12549\c12549;\csgenericrgb\c60000\c65882\c72941;
+\csgenericrgb\c52157\c37647\c60392;\csgenericrgb\c34510\c46275\c27843;\csgenericrgb\c33725\c51765\c67843;\csgenericrgb\c50196\c36471\c58039;\csgenericrgb\c30588\c47843\c46667;
+\csgenericrgb\c32157\c0\c40392;\csgenericrgb\c5882\c43922\c1176;\csgenericrgb\c0\c0\c99608;\csgenericrgb\c0\c0\c42745;\csgenericrgb\c5490\c43137\c42745;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs26 \cf2 \cb3 Successful run #1\
+--- Plane detection took 169.413 seconds ---\
+\cf4 \{\
+  \cf5 "input_file"\cf2 : \cf6 "bk.ply"\cf2 ,\
+  \cf5 "output_file"\cf2 : \cf6 "out.ply"\cf2 ,\
+  \cf5 "n_planes"\cf2 : \cf7 1000\cf2 ,\
+  \cf5 "k"\cf2 : \cf7 10\cf2 ,\
+  \cf5 "min_score"\cf2 : \cf7 750\cf2 ,\
+  \cf5 "epsilon"\cf2 : \cf7 0.3\
+\cf4 \}\
+\cf2 int \cf4 localArea = \cf7 17\cf2 ;\
+\
+if \cf4 (euclidianSquared(\cf8 _input_points\cf9 [\cf4 i\cf9 ]\cf4 .\cf8 x\cf2 , \cf8 _input_points\cf9 [\cf4 i\cf9 ]\cf4 .\cf8 y\cf2 , \cf8 _input_points\cf9 [\cf4 i\cf9 ]\cf4 .\cf8 z\cf2 , \cf4 randomPoint->\cf8 x\cf2 ,\
+                     \cf4 randomPoint->\cf8 y\cf2 , \cf4 randomPoint->\cf8 z\cf4 ) < \cf7 4\cf4 ) \{\
+\
+Successful run #2\
+--- Plane detection took 513.282 seconds ---\
+\cf0 \cb1 \{\
+  
+\f1\b \cf10 "input_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "bk.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "output_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "out.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "n_planes"
+\f0\b0 \cf0 : \cf12 2000\cf0 ,\
+  
+\f1\b \cf10 "k"
+\f0\b0 \cf0 : \cf12 15\cf0 ,\
+  
+\f1\b \cf10 "min_score"
+\f0\b0 \cf0 : \cf12 1000\cf0 ,\
+  
+\f1\b \cf10 "epsilon"
+\f0\b0 \cf0 : \cf12 0.3\
+\cf0 \}\
+
+\f1\b \cf13 int 
+\f0\b0 \cf0 localArea = \cf12 20\cf0 ;\
+\
+Successful run #3\
+--- Plane detection took 598.780 seconds ---\
+\{\
+  
+\f1\b \cf10 "input_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "bk.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "output_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "out.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "n_planes"
+\f0\b0 \cf0 : \cf12 2000\cf0 ,\
+  
+\f1\b \cf10 "k"
+\f0\b0 \cf0 : \cf12 10\cf0 ,\
+  
+\f1\b \cf10 "min_score"
+\f0\b0 \cf0 : \cf12 1000\cf0 ,\
+  
+\f1\b \cf10 "epsilon"
+\f0\b0 \cf0 : \cf12 0.3\
+\cf0 \}\
+
+\f1\b \cf13 int 
+\f0\b0 \cf0 localArea = \cf12 25\cf0 ;\
+
+\f1\b \cf13 if 
+\f0\b0 \cf0 (euclidianSquared(\cf10 _input_points\cf14 [\cf0 i\cf14 ]\cf0 .\cf10 x\cf0 , \cf10 _input_points\cf14 [\cf0 i\cf14 ]\cf0 .\cf10 y\cf0 , \cf10 _input_points\cf14 [\cf0 i\cf14 ]\cf0 .\cf10 z\cf0 , randomPoint->\cf10 x\cf0 ,\
+                     randomPoint->\cf10 y\cf0 , randomPoint->\cf10 z\cf0 ) < \cf12 3)\{\
+\}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b \cf13 if
+\f0\b0 \cf0 (threshold > (\cf12 0.5 \cf0 * min))\{\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf12 #96 segments\
+\
+Successful run #4\
+--- Plane detection took 297.707 seconds ---\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \{\
+  
+\f1\b \cf10 "input_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "bk.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "output_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "out.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "n_planes"
+\f0\b0 \cf0 : \cf12 200\cf0 ,\
+  
+\f1\b \cf10 "k"
+\f0\b0 \cf0 : \cf12 50\cf0 ,\
+  
+\f1\b \cf10 "min_score"
+\f0\b0 \cf0 : \cf12 1000\cf0 ,\
+  
+\f1\b \cf10 "epsilon"
+\f0\b0 \cf0 : \cf12 0.5\
+\cf0 \}\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf12 \
+\
+Successful run #5\
+\cf0 \{\
+  
+\f1\b \cf10 "input_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "bk.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "output_file"
+\f0\b0 \cf0 : 
+\f1\b \cf11 "out.ply"
+\f0\b0 \cf0 ,\
+  
+\f1\b \cf10 "n_planes"
+\f0\b0 \cf0 : \cf12 1000\cf0 ,\
+  
+\f1\b \cf10 "k"
+\f0\b0 \cf0 : \cf12 10\cf0 ,\
+  
+\f1\b \cf10 "min_score"
+\f0\b0 \cf0 : \cf12 1500\cf0 ,\
+  
+\f1\b \cf10 "epsilon"
+\f0\b0 \cf0 : \cf12 0.4\
+\cf0 \}\
+
+\f1\b \cf13 int 
+\f0\b0 \cf0 localArea = \cf12 30\cf0 ;\
+(localArea*localArea)/\cf12 20\
+
+\f1\b \cf13 if
+\f0\b0 \cf0 (threshold > (\cf12 0.5 \cf0 * min))\{\
+\
+\cf12 Successful run #6\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf4 \cb3 \{\
+  \cf5 "input_file"\cf2 : \cf6 "bk.ply"\cf2 ,\
+  \cf5 "output_file"\cf2 : \cf6 "out.ply"\cf2 ,\
+  \cf5 "n_planes"\cf2 : \cf7 5000\cf2 ,\
+  \cf5 "k"\cf2 : \cf7 10\cf2 ,\
+  \cf5 "min_score"\cf2 : \cf7 2000\cf2 ,\
+  \cf5 "epsilon"\cf2 : \cf7 0.3\
+\cf4 \}\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf12 --- Plane detection took 1504.916 seconds ---\
+\cb1 32 segments\
+\
+Successful run #7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf4 \cb3 \{\
+  \cf5 "input_file"\cf2 : \cf6 "bk.ply"\cf2 ,\
+  \cf5 "output_file"\cf2 : \cf6 "out.ply"\cf2 ,\
+  \cf5 "n_planes"\cf2 : \cf7 5000\cf2 ,\
+  \cf5 "k"\cf2 : \cf7 10\cf2 ,\
+  \cf5 "min_score"\cf2 : \cf7 2000\cf2 ,\
+  \cf5 "epsilon"\cf2 : \cf7 0.35\
+\cf4 \}\
+\cf2 if\cf4 (threshold > (\cf7 0.5 \cf4 * min))\{\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf12 --- Plane detection took 1510.350 seconds ---\
+\cb1 \
+55 segments\
+\
+}

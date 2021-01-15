@@ -1,8 +1,8 @@
 {
   "input_file": "bk.ply",
   "output_file": "out.ply",
-  "n_planes": 100,
-  "k": 100,
-  "min_score": 500,
-  "epsilon": 0.5
+  "n_planes": 5000,
+  "k": 10,
+  "min_score": 2000,
+  "epsilon": 0.35
 }
