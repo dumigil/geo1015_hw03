@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
 	for (int i = 0; i < n_planes; ++i) {
 		detector.detect_plane(epsilon, min_score, k);
-		std::cout<<i<<std::endl;
+		//std::cout<<i<<std::endl;
 	}
 
   auto finish = std::chrono::high_resolution_clock::now();

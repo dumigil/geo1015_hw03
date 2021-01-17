@@ -1,8 +1,8 @@
 {
-  "input_file": "bk.ply",
-  "output_file": "out.ply",
-  "n_planes": 5000,
-  "k": 10,
-  "min_score": 2000,
-  "epsilon": 0.35
+  "input_file": "ahn3.ply",
+  "output_file": "test-ahn3.ply",
+  "n_planes": 1000,
+  "k": 3,
+  "min_score": 5000,
+  "epsilon": 0.4
 }

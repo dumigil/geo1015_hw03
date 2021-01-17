@@ -60,70 +60,79 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
     int min = min_score;
     int num_iter = k;
     double tolerance = epsilon;
-    int localArea = 30;
+    double localArea = min_score/115; //change for smaller datasets
     std::vector<std::vector<Point *>> total_sets;
     std::uniform_int_distribution<int> distrib1(0, _input_points.size() - 1);
 
     while (num_iter > 0) {
+        //declare vectors that will hold various pointers to input points
         std::vector<Point *> in_set;
         std::vector<Point *> random_set;
-
         std::vector<Point *> localSet;
         std::vector<Point *> planeSet;
+
+        //pick a number and point
         int randomNumber1 = distrib1(_rand);
-
-
         Point *randomPoint = &_input_points[randomNumber1];
+        if(randomPoint->segment_id ==0) {
 
-        for (int i = 0; i != _input_points.size(); i++) {
-            if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
-                                 randomPoint->y, randomPoint->z) < std::pow(localArea, 2)) {
-                localSet.push_back(&_input_points[i]);
+            //organise into vectors for plane detection and plane construction resp
+            for (int i = 0; i != _input_points.size(); i++) {
+                if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
+                                     randomPoint->y, randomPoint->z) < std::pow(localArea, 2)) {
+                    localSet.push_back(&_input_points[i]);
+                }
+                if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
+                                     randomPoint->y, randomPoint->z) < (localArea * localArea) / 20) {
+                    planeSet.push_back(&_input_points[i]);
+
+                }
             }
-            if (euclidianSquared(_input_points[i].x, _input_points[i].y, _input_points[i].z, randomPoint->x,
-                                 randomPoint->y, randomPoint->z) < (localArea*localArea)/20) {
-                planeSet.push_back(&_input_points[i]);
+            //pick another random number and point
+            std::uniform_int_distribution<int> distrib2(0, planeSet.size() - 1);
+
+            if (planeSet.size() > 3) {
+                while (random_set.size() < 3) {
+                    int randomNumber2 = distrib2(_rand);
+                    Point *randomPoint2 = planeSet[randomNumber2];
+                    random_set.push_back(randomPoint2);
+                }
+            } else {
+                break;
+            }
+
+            //actual inlier detection
+            double a = ((random_set[1]->y - random_set[0]->y) * (random_set[2]->z - random_set[0]->z)) -
+                       ((random_set[1]->z - random_set[0]->z) * (random_set[2]->y - random_set[1]->y));
+            double b = ((random_set[1]->z - random_set[0]->z) * (random_set[2]->x - random_set[0]->x)) -
+                       ((random_set[1]->x - random_set[0]->x) * (random_set[2]->z - random_set[1]->z));
+            double c = ((random_set[1]->x - random_set[0]->x) * (random_set[2]->y - random_set[0]->y)) -
+                       ((random_set[1]->y - random_set[0]->y) * (random_set[2]->x - random_set[1]->x));
+            double d = -1 * ((a * random_set[0]->x) + (b * random_set[0]->y) + (c * random_set[0]->z));
+            int counter = 0;
+
+            for (int i = 0; i < localSet.size(); ++i) {
+                double dist = std::abs(((a * localSet[i]->x) + (b * localSet[i]->y) + (c * localSet[i]->z) + d) /
+                                       (std::sqrt(a * a + b * b + c * c)));
+                if (dist < tolerance) {
+                    in_set.push_back(localSet[i]);
+                    counter++;
+                }
+            }
+            if (counter > min) {
+                total_sets.push_back(in_set);
+                num_iter--;
+            } else {
+                num_iter--;
             }
         }
-        std::uniform_int_distribution<int> distrib2(0, planeSet.size() -1);
-
-        if (planeSet.size() > 3) {
-            while (random_set.size() < 3) {
-                int randomNumber2 = distrib2(_rand);
-                Point *randomPoint2 = planeSet[randomNumber2];
-                random_set.push_back(randomPoint2);
-            }
-        }
-
         else{
             break;
         }
-
-        double a = ((random_set[1]->y - random_set[0]->y) * (random_set[2]->z - random_set[0]->z)) -
-                   ((random_set[1]->z - random_set[0]->z) * (random_set[2]->y - random_set[1]->y));
-        double b = ((random_set[1]->z - random_set[0]->z) * (random_set[2]->x - random_set[0]->x)) -
-                   ((random_set[1]->x - random_set[0]->x) * (random_set[2]->z - random_set[1]->z));
-        double c = ((random_set[1]->x - random_set[0]->x) * (random_set[2]->y - random_set[0]->y)) -
-                   ((random_set[1]->y - random_set[0]->y) * (random_set[2]->x - random_set[1]->x));
-        double d = -1 * ((a * random_set[0]->x) + (b * random_set[0]->y) + (c * random_set[0]->z));
-        int counter = 0;
-
-        for (int i = 0; i < localSet.size(); ++i) {
-            double dist = std::abs(((a * localSet[i]->x) + (b * localSet[i]->y) + (c * localSet[i]->z) + d) /
-                                   (std::sqrt(a * a + b * b + c * c)));
-            if (dist < tolerance) {
-                in_set.push_back(localSet[i]);
-                counter++;
-            }
-        }
-        if (counter > min) {
-            total_sets.push_back(in_set);
-            num_iter--;
-        } else {
-            num_iter--;
-        }
         //std::cout<<num_iter<<std::endl;
     }
+
+    //sort and select the largest
     std::vector<Point *> largestSet;
     std::sort(total_sets.begin(), total_sets.end(),
               [](const std::vector<Point *> &a, const std::vector<Point *> &b) { return a.size() < b.size(); });
@@ -139,6 +148,7 @@ void PlaneDetector::detect_plane(double epsilon, int min_score, int k) {
                     continue;
                 }
             }
+            //assign segment id
             if(threshold > (0.5 * min)){
                 for(int k = 0; k < largestSet.size(); k++){
                     Point *pt2 = largestSet[k];
@@ -193,9 +203,9 @@ void PlaneDetector::write_ply(std::string filepath) {
     outfile << "ply" << std::endl;
     outfile << "format ascii 1.0" << std::endl;
     outfile << "element vertex" << " " << _input_points.size() <<std::endl;
-    outfile << "property float64 x" << std::endl;
-    outfile << "property float64 y" << std::endl;
-    outfile << "property float64 z" << std::endl;
+    outfile << "property float x" << std::endl;
+    outfile << "property float y" << std::endl;
+    outfile << "property float z" << std::endl;
     outfile << "property int segment_id" << std::endl;
     outfile << "end_header" << std::endl;
     for (const auto &e : _input_points) outfile <<std::setprecision(10)<< e.x << " " << e.y << " " << e.z << " " << e.segment_id <<  "\n";
